@@ -5,13 +5,13 @@ const aws = require('aws-sdk');
 const ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
 const SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const BUCKET = process.env.AWS_BUCKET_NAME;
-aws.config.update(
-	{
-		ACCESS_KEY,
-		SECRET_KEY,
-		'us-east-1'
-	}
-);
+//aws.config.update(
+	//{
+		//ACCESS_KEY,
+		//SECRET_KEY,
+		//'us-east-1'
+	//}
+//);
 
 let s3 = new aws.S3();
 
