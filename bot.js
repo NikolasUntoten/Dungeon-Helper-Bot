@@ -1,8 +1,21 @@
 const Discord = require("discord.js");
 const fs = require("fs");
-const { token } = require('./config.json');
+
+const aws = require('aws-sdk');
+aws.config.update(
+    {
+        process.env.AWS_ACCESS_KEY_ID,
+        process.env.AWS_SECRET_ACCESS_KEY,
+        'us-east-1'
+    }
+);
+
+let s3 = new aws.S3();
+
 const bot = new Discord.Client();
-const prefPath = './prefs/'
+const prefPath = ''
+
+const cache = new Map();
 
 const list = 'roles';
 const role = 'give';
@@ -23,6 +36,11 @@ bot.on("message", (message) => {
 	var guildname = message.guild.name;
 	var author = message.member;
 	var prefs = loadPrefs(guildname);
+	
+	if (!prefs) {
+		message.channel.send("Loading, please wait and try again.");
+		return;
+	}
 	
 	const cmd = message.content.toLowerCase().split(" ")[0];
 	const text = message.content.substring(cmd.length + 1) //Little bit of input cleaning
@@ -57,7 +75,7 @@ bot.on("message", (message) => {
 });
 
 
-bot.login(token);
+bot.login(process.env.token);
 
 // COMMAND METHODS
 function help(channel, prefix) {
@@ -141,21 +159,54 @@ async function getRole(guild, rolename) {
 
 function getPath(guildname) { return prefPath + guildname + '.json'; }
 
-function loadPrefs(guildname) {
-	var prefpath = getPath(guildname);
-	if (! fs.existsSync(prefpath)) {
-		makePrefs(prefpath);
+async function loadPrefs(guildname) {
+	
+	if (cache.get(guildname)) {
+		return cache.get(guildname);
 	}
-	return JSON.parse(fs.readFileSync(prefpath, 'utf8'));
+	
+	var params = {
+		Bucket: process.env.AWS_BUCKET_NAME,
+		Key: getPath(guildname),
+	}
+	var json;
+	
+    await s3.getObject(params, (err, data) => {
+        if (err) console.error(err)
+        json = JSON.parse(data.Body().toString());
+    });
+	
+	if (json) {
+		cache.set(guildname, json);
+		return json;
+	} else {
+		cache.set(guildname, makePrefs(guildname);
+		return cache.get(guildname);
+	}
 }
 
-function makePrefs(path) {
+function makePrefs(guildname) {
 	var content = "{\"prefix\":\"!\", \"roles\":[]}";
-	fs.writeFileSync(path, content);
+	savePrefs(guildname, content);
+	return JSON.parse(content);
 }
 
 function savePrefs(guildname, prefs) {
-	fs.writeFileSync(getPath(guildname), JSON.stringify(prefs, null, 2));
+	var data = JSON.stringify(prefs, null, 2);
+	var base64data = new Buffer(data, 'binary');
+	
+	var params = {
+		Bucket: process.env.AWS_BUCKET_NAME,
+		Key: getPath(guildname),
+		Body: base64data
+	}
+	
+	s3.upload(params, (err, data) => {
+		if (err) console.error(`Upload Error ${err}`)
+		console.log('Upload Completed')
+	});
+	
+	cache.set(guildname, prefs);
 }
 
 // UTILITY
