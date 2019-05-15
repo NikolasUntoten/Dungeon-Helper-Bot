@@ -177,7 +177,7 @@ async function loadPrefs(guildname) {
 	
     await s3.getObject(params, (err, data) => {
         if (err) console.error(err)
-        json = JSON.parse(data.Body().toString());
+        json = JSON.parse(data.Body.toString());
     });
 	
 	if (json) {
