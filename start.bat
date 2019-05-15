@@ -1,1 +1,1 @@
-heroku restart -a master-shitposter
+heroku restart -a dungeonhelperbot
