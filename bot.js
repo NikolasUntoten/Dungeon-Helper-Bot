@@ -38,9 +38,10 @@ bot.on('ready', function (evt) {
 bot.on("message", (message) => {
 	var guildname = message.guild.name;
 	var author = message.member;
-	var prefs = loadPrefs(guildname);
+	var prefs = cache.get(message.guild.name);
 	
 	if (!prefs) {
+		loadPrefs(guildname)
 		message.channel.send("Loading, please wait and try again.");
 		return;
 	}
@@ -178,6 +179,7 @@ async function loadPrefs(guildname) {
     await s3.getObject(params, (err, data) => {
         if (err) console.error(err)
         json = JSON.parse(data.Body.toString());
+		console.log('Download Completed')
     });
 	
 	if (json) {
@@ -208,7 +210,7 @@ function savePrefs(guildname, prefs) {
 	
 	s3.upload(params, (err, data) => {
 		if (err) console.error(`Upload Error ${err}`)
-		console.log('Upload Completed')
+		console.log('Upload Completed');
 	});
 	
 	cache.set(guildname, prefs);
