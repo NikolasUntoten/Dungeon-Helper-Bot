@@ -197,7 +197,7 @@ function makePrefs(guildname) {
 
 function savePrefs(guildname, prefs) {
 	var data = JSON.stringify(prefs, null, 2);
-	var base64data = new Buffer(data, 'binary');
+	var base64data = new Buffer.from(data, 'binary');
 	
 	const key = getPath(guildname);
 	var params = {
