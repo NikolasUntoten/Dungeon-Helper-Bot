@@ -184,7 +184,7 @@ async function loadPrefs(guildname) {
 		cache.set(guildname, json);
 		return json;
 	} else {
-		cache.set(guildname, makePrefs(guildname);
+		cache.set(guildname, makePrefs(guildname));
 		return cache.get(guildname);
 	}
 }
