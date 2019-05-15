@@ -2,12 +2,15 @@ const Discord = require("discord.js");
 const fs = require("fs");
 
 const aws = require('aws-sdk');
+const ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
+const SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const BUCKET = process.env.AWS_BUCKET_NAME;
 aws.config.update(
-    {
-        process.env.AWS_ACCESS_KEY_ID,
-        process.env.AWS_SECRET_ACCESS_KEY,
-        'us-east-1'
-    }
+	{
+		ACCESS_KEY,
+		SECRET_KEY,
+		'us-east-1'
+	}
 );
 
 let s3 = new aws.S3();
@@ -165,9 +168,10 @@ async function loadPrefs(guildname) {
 		return cache.get(guildname);
 	}
 	
+	const key = getPath(guildname);
 	var params = {
-		Bucket: process.env.AWS_BUCKET_NAME,
-		Key: getPath(guildname),
+		Bucket: BUCKET,
+		Key: key,
 	}
 	var json;
 	
@@ -195,9 +199,10 @@ function savePrefs(guildname, prefs) {
 	var data = JSON.stringify(prefs, null, 2);
 	var base64data = new Buffer(data, 'binary');
 	
+	const key = getPath(guildname);
 	var params = {
-		Bucket: process.env.AWS_BUCKET_NAME,
-		Key: getPath(guildname),
+		Bucket: BUCKET,
+		Key: key,
 		Body: base64data
 	}
 	
