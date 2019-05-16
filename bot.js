@@ -277,7 +277,10 @@ async function loadPrefs(guildname) {
 	var json;
 	
     await s3.getObject(params, (err, data) => {
-        if (err) console.error(err)
+        if (err) {
+			cache.set(guildname, makePrefs(guildname));
+			json = cache.get(guildname);
+		}
         json = JSON.parse(data.Body.toString());
 		console.log('Download Completed')
     });
