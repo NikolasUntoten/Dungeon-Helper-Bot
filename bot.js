@@ -45,19 +45,15 @@ bot.on("message", (message) => {
 	var guildname = message.guild.name;
 	var author = message.member;
 	var prefs = cache.get(guildname);
-	if (!prefs) {
-		loadPrefs(guildname);
-	}
 	
 	const cmd = message.content.toLowerCase().split(" ")[0];
 	const text = message.content.substring(cmd.length + 1) //Little bit of input cleaning
 	
-	if (!prefs && cmd.startsWith("!")) {
-		message.channel.send("Loading, please wait and try again.");
-		return;
-	}
-	
-	if (!cmd.startsWith(prefs.prefix)) {
+	if (!prefs) {
+		if (cmd.startsWith("!")) {
+			message.channel.send("Loading, please wait and try again.");
+		}
+		loadPrefs(guildname);
 		return;
 	}
 	
