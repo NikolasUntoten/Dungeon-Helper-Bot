@@ -250,8 +250,10 @@ async function listAuto(prefs, channel) {
 
 async function checkRole(guild, prefs, name) {
 	var exists = await getRole(guild, name);
-	var available = (prefs.roles.indexOf(exists) != -1);
-	return exists && available;
+	if (exists) {
+		return prefs.roles.indexOf(exists) >= 0;
+	}
+	return false;
 }
 
 async function getRole(guild, rolename) {
