@@ -277,13 +277,20 @@ async function loadPrefs(guildname) {
 		console.log('Download Completed')
     });
 	
+	
 	if (json) {
 		cache.set(guildname, json);
 		return json;
 	} else {
-		console.log(json);
-		cache.set(guildname, makePrefs(guildname));
-		return cache.get(guildname);
+		await sleep(1000);
+		if (json) {
+			cache.set(guildname, json);
+			return json;
+		} else {
+			console.log(json);
+			cache.set(guildname, makePrefs(guildname));
+			return cache.get(guildname);
+		}
 	}
 }
 
