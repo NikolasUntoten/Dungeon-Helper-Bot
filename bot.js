@@ -62,7 +62,7 @@ bot.on("message", (message) => {
 		return;
 	}
 	
-	console.log("Processing command");
+	console.log("Processing command " + cmd);
 	
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
