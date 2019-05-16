@@ -50,12 +50,19 @@ bot.on("message", (message) => {
 	const text = message.content.substring(cmd.length + 1) //Little bit of input cleaning
 	
 	if (!prefs) {
+		console.log("Loading prefs into cache.");
 		if (cmd.startsWith("!")) {
 			message.channel.send("Loading, please wait and try again.");
 		}
 		loadPrefs(guildname);
 		return;
 	}
+	
+	if (!cmd.startsWith("!")) {
+		return;
+	}
+	
+	console.log("Processing command");
 	
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
@@ -283,7 +290,6 @@ async function loadPrefs(guildname) {
 		return json;
 	} else {
 		await sleep(1000);
-		console.log("Done waiting");
 		if (json) {
 			cache.set(guildname, json);
 			return json;
