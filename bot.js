@@ -25,6 +25,9 @@ const role = 'give';
 const remrole = 'remove';
 const setavail = 'available';
 const remavail = 'unavailable';
+const setauto = 'setauto';
+const remauto = 'removeauto';
+const setprefix = 'setprefix';
 
 bot.on('ready', function (evt) {
   guilds = bot.guilds.array();
@@ -38,7 +41,7 @@ bot.on('ready', function (evt) {
 bot.on("message", (message) => {
 	var guildname = message.guild.name;
 	var author = message.member;
-	var prefs = cache.get(message.guild.name);
+	var prefs = cache.get(guildname);
 	
 	if (!prefs) {
 		loadPrefs(guildname)
@@ -75,27 +78,57 @@ bot.on("message", (message) => {
 		if (cmd == prefs.prefix + remavail) {
 			adminRemoveRole(message, prefs, text);
 		}
+		
+		if (cmd == prefs.prefix + setauto) {
+			adminAddAuto(message, prefs, text);
+		}
+		
+		if (cmd == prefs.prefix + remauto) {
+			adminRemoveAuto(message, prefs, text);
+		}
+		
+		if (cmd == prefs.prefix + setprefix) {
+			prefs.prefix = text;
+			savePrefs(guildname);
+		}
 	}
 });
 
+bot.on("guildMemberAdd", (member) => {
+	
+	var prefs = cache.get(guildname);
+	
+	if (!prefs) {
+		loadPrefs(guildname)
+		message.channel.send("Loading, please wait and try again.");
+		return;
+	}
+	
+	for (var i = 0; i < prefs.autoroles.length; i++) {
+		giveUserRole(member.guild, null, member, prefs, prefs.autoroles[i]);
+	}
+});
 
 bot.login(process.env.token);
 
 // COMMAND METHODS
 function help(channel, prefix) {
   channel.send(prefix + list + ": lists all available roles.\n"
-				+ prefix + role + " <name>: Sets the role of the user that sent this message to <name>. \n" 
-				+ prefix + remrole + " <name>: Removes the role <name> from the user that sent this message.\n"
+				+ prefix + role + " <role>: Sets the role of the user that sent this message to <role>. \n" 
+				+ prefix + remrole + " <role>: Removes the <role> from the user that sent this message.\n"
 				+ "Below here are admin commands.\n"
-				+ prefix + setavail + " <name>: marks role <name> as available for anyone to set for themselves. \n" 
-				+ prefix + remavail + " <name>: removes role <name> from availability.\n");
+				+ prefix + setavail + " <role>: marks <role> as available for anyone to set for themselves. \n" 
+				+ prefix + remavail + " <role>: removes <role> from availability.\n"
+				+ prefix + setauto + " <role>: sets <role> to be automatically given to newcomers.\n"
+				+ prefix + remauto + " <role>: removes <role> from being automatically given to newcomers.\n"
+				+ prefix + setprefix + " <symbol>: sets the prefix for all messages (default '!') to a new symbol.\n");
 }
 
 async function giveUserRole(guild, channel, user, prefs, rolename) {
 	if (checkRole(guild, prefs, rolename)) {
 		try {
 			const role = await getRole(guild, rolename);
-			user.addRole(role, "Ask and you shall receive.");
+			await user.addRole(role, "Ask and you shall receive.");
 		} catch (error) {
 			channel.send("Issue giving role, " + error);
 		}
@@ -108,7 +141,7 @@ async function removeUserRole(guild, channel, user, prefs, rolename) {
 	if (checkRole(guild, prefs, rolename)) {
 		try {
 			const role = await getRole(guild, rolename);
-			user.removeRole(role, "Ask and you shall receive.");
+			await user.removeRole(role, "Ask and you shall receive.");
 		} catch (error) {
 			channel.send("Issue removing role, " + error);
 		}
@@ -132,6 +165,28 @@ async function adminRemoveRole(message, prefs, rolename) {
 	
 	if (checkRole(message.guild, prefs, rolename)) {
 		prefs.roles.splice(prefs.roles.indexOf(rolename), 1);
+		savePrefs(message.guild.name, prefs);
+	} else {
+		message.channel.send("Role already not available.");
+	}
+}
+
+async function adminAddAuto(message, prefs, rolename) {
+	var role = getRole(message.guild, rolename);
+	
+	if (role && prefs.autoroles.indexOf(rolename) == -1) {
+		prefs.roles.push(rolename);
+		savePrefs(message.guild.name, prefs);
+	} else {
+		message.channel.send("Role already marked as available.");
+	}
+}
+
+async function adminRemoveAuto(message, prefs, rolename) {
+	var role = getRole(message.guild, rolename);
+	
+	if (role && prefs.autoroles.indexOf(rolename) != -1) {
+		prefs.roles.splice(prefs.autoroles.indexOf(rolename), 1);
 		savePrefs(message.guild.name, prefs);
 	} else {
 		message.channel.send("Role already not available.");
@@ -192,7 +247,7 @@ async function loadPrefs(guildname) {
 }
 
 function makePrefs(guildname) {
-	var content = "{\"prefix\":\"!\", \"roles\":[]}";
+	var content = "{\"prefix\":\"!\", \"autoroles\":[] \"roles\":[]}";
 	savePrefs(guildname, content);
 	return JSON.parse(content);
 }
