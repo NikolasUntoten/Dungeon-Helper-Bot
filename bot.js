@@ -40,6 +40,8 @@ bot.on('ready', function (evt) {
 });
 
 bot.on("message", (message) => {
+	if (message.author.bot) return;
+	
 	var guildname = message.guild.name;
 	var author = message.member;
 	var prefs = cache.get(guildname);
@@ -74,6 +76,7 @@ bot.on("message", (message) => {
 		
 		if (cmd == prefs.prefix + "adminhelp") {
 			adminhelp(message.channel, prefs.prefix);
+			return;
 		}
 		
 		if (cmd == prefs.prefix + setavail) {
@@ -116,6 +119,10 @@ bot.on("guildMemberAdd", (member) => {
 	for (var i = 0; i < prefs.autoroles.length; i++) {
 		giveUserRole(member.guild, null, member, prefs, prefs.autoroles[i]);
 	}
+});
+
+bot.on('guildCreate', guild => {
+	makePrefs(guild.name);
 });
 
 bot.login(process.env.token);
@@ -189,7 +196,7 @@ async function adminAddAuto(message, prefs, rolename) {
 	var role = getRole(message.guild, rolename);
 	
 	if (role && prefs.autoroles.indexOf(rolename) == -1) {
-		prefs.roles.push(rolename);
+		prefs.autoroles.push(rolename);
 		savePrefs(message.guild.name, prefs);
 	} else {
 		message.channel.send("Role already marked as available.");
@@ -200,7 +207,7 @@ async function adminRemoveAuto(message, prefs, rolename) {
 	var role = getRole(message.guild, rolename);
 	
 	if (role && prefs.autoroles.indexOf(rolename) != -1) {
-		prefs.roles.splice(prefs.autoroles.indexOf(rolename), 1);
+		prefs.autoroles.splice(prefs.autoroles.indexOf(rolename), 1);
 		savePrefs(message.guild.name, prefs);
 	} else {
 		message.channel.send("Role already not available.");
@@ -219,11 +226,11 @@ async function listRoles(prefs, channel) {
 }
 
 async function listAuto(prefs, channel) {
-	str = `Available roles: `;
+	str = `Automatic roles: `;
 	for (var i = 0; i < prefs.autoroles.length-1; i++) {
 		str += (`${prefs.autoroles[i]}, `);
 	}
-	if (prefs.roles.length > 0) {
+	if (prefs.autoroles.length > 0) {
 		str += (`${prefs.autoroles[prefs.autoroles.length - 1]}`);
 	}
 	channel.send(str);
