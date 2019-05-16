@@ -39,7 +39,9 @@ bot.on('ready', function (evt) {
   console.log(`\nLogged in as: ${bot.user.username}`);
 });
 
-bot.on("message", (message) => {
+bot.on("message", onMessage);
+
+async function onMessage(message) {
 	if (message.author.bot) return;
 	
 	var guildname = message.guild.name;
@@ -51,11 +53,7 @@ bot.on("message", (message) => {
 	
 	if (!prefs) {
 		console.log("Loading prefs into cache.");
-		if (cmd.startsWith("!")) {
-			message.channel.send("Loading, please wait and try again.");
-		}
-		loadPrefs(guildname);
-		return;
+		await loadPrefs(guildname);
 	}
 	
 	if (!cmd.startsWith("!")) {
@@ -110,7 +108,7 @@ bot.on("message", (message) => {
 			savePrefs(guildname);
 		}
 	}
-});
+}
 
 bot.on("guildMemberAdd", (member) => {
 	
