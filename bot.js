@@ -282,7 +282,7 @@ async function loadPrefs(guildname) {
 		cache.set(guildname, json);
 		return json;
 	} else {
-		await sleep(1000);
+		await sleep(10);
 		if (json) {
 			cache.set(guildname, json);
 			return json;
