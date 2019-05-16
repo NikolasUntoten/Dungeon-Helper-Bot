@@ -85,7 +85,6 @@ bot.on("message", (message) => {
 		
 		if (cmd == prefs.prefix + "adminhelp") {
 			adminhelp(message.channel, prefs.prefix);
-			return;
 		}
 		
 		if (cmd == prefs.prefix + setavail) {
@@ -140,6 +139,7 @@ bot.login(process.env.token);
 
 // COMMAND METHODS
 function help(channel, prefix) {
+	console.log("sending help");
   channel.send(prefix + list + ": lists all available roles.\n"
 				+ prefix + role + " <role>: Sets the role of the user that sent this message to <role>. \n" 
 				+ prefix + remrole + " <role>: Removes the <role> from the user that sent this message.\n"
