@@ -49,7 +49,7 @@ bot.on("message", (message) => {
 	const cmd = message.content.toLowerCase().split(" ")[0];
 	const text = message.content.substring(cmd.length + 1) //Little bit of input cleaning
 	
-	if (typeof prefs === undefined) {
+	if (!prefs) {
 		console.log("Loading prefs into cache.");
 		if (cmd.startsWith("!")) {
 			message.channel.send("Loading, please wait and try again.");
@@ -62,7 +62,7 @@ bot.on("message", (message) => {
 		return;
 	}
 	
-	console.log(prefs.prefix);
+	console.log(prefs);
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
 	}
