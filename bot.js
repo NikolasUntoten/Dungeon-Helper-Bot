@@ -124,7 +124,7 @@ bot.on("guildMemberAdd", (member) => {
 });
 
 bot.on('guildCreate', guild => {
-	makePrefs(guild.name);
+	//makePrefs(guild.name);
 });
 
 bot.login(process.env.token);
