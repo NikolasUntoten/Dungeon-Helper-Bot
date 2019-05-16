@@ -71,6 +71,10 @@ bot.on("message", (message) => {
 	// role manager stuffs
 	if (author.hasPermission(Discord.Permissions.FLAGS.MANAGE_ROLES)) {
 		
+		if (cmd == prefs.prefix + "adminhelp") {
+			adminhelp(message.channel, prefs.prefix);
+		}
+		
 		if (cmd == prefs.prefix + setavail) {
 			adminAddRole(message, prefs, text);
 		}
@@ -116,13 +120,17 @@ function help(channel, prefix) {
   channel.send(prefix + list + ": lists all available roles.\n"
 				+ prefix + role + " <role>: Sets the role of the user that sent this message to <role>. \n" 
 				+ prefix + remrole + " <role>: Removes the <role> from the user that sent this message.\n"
-				+ "Below here are admin commands.\n"
-				+ prefix + setavail + " <role>: marks <role> as available for anyone to set for themselves. \n" 
+				+ prefix + "adminhelp: help for admins!\n");
+}
+
+function adminhelp(channel, prefix) {
+  channel.send(prefix + setavail + " <role>: marks <role> as available for anyone to set for themselves. \n" 
 				+ prefix + remavail + " <role>: removes <role> from availability.\n"
 				+ prefix + setauto + " <role>: sets <role> to be automatically given to newcomers.\n"
 				+ prefix + remauto + " <role>: removes <role> from being automatically given to newcomers.\n"
 				+ prefix + setprefix + " <symbol>: sets the prefix for all messages (default '!') to a new symbol.\n");
 }
+
 
 async function giveUserRole(guild, channel, user, prefs, rolename) {
 	if (checkRole(guild, prefs, rolename)) {
@@ -247,7 +255,7 @@ async function loadPrefs(guildname) {
 }
 
 function makePrefs(guildname) {
-	var content = "{\"prefix\":\"!\", \"autoroles\":[] \"roles\":[]}";
+	var content = "{\"prefix\":\"!\", \"autoroles\":[], \"roles\":[]}";
 	savePrefs(guildname, content);
 	return JSON.parse(content);
 }
