@@ -45,15 +45,17 @@ bot.on("message", (message) => {
 	var guildname = message.guild.name;
 	var author = message.member;
 	var prefs = cache.get(guildname);
-	
 	if (!prefs) {
-		loadPrefs(guildname)
-		message.channel.send("Loading, please wait and try again.");
-		return;
+		loadPrefs(guildname);
 	}
 	
 	const cmd = message.content.toLowerCase().split(" ")[0];
 	const text = message.content.substring(cmd.length + 1) //Little bit of input cleaning
+	
+	if (!prefs && cmd.startsWith(prefs.prefix)) {
+		message.channel.send("Loading, please wait and try again.");
+		return;
+	}
 	
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
@@ -279,6 +281,7 @@ async function loadPrefs(guildname) {
 		cache.set(guildname, json);
 		return json;
 	} else {
+		console.log(json);
 		cache.set(guildname, makePrefs(guildname));
 		return cache.get(guildname);
 	}
