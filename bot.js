@@ -280,9 +280,10 @@ async function loadPrefs(guildname) {
         if (err) {
 			cache.set(guildname, makePrefs(guildname));
 			json = cache.get(guildname);
+		} else {
+			json = JSON.parse(data.Body.toString());
+			console.log('Download Completed');
 		}
-        json = JSON.parse(data.Body.toString());
-		console.log('Download Completed')
     });
 	
 	await sleep(1000);
