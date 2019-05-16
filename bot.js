@@ -119,8 +119,7 @@ bot.on("guildMemberAdd", (member) => {
 	var prefs = cache.get(guildname);
 	
 	if (!prefs) {
-		loadPrefs(guildname)
-		message.channel.send("Loading, please wait and try again.");
+		loadPrefs(guildname);
 		return;
 	}
 	
@@ -251,7 +250,6 @@ async function listAuto(prefs, channel) {
 async function checkRole(guild, prefs, name) {
 	var exists = await getRole(guild, name);
 	if (exists) {
-		console.log(prefs.roles.indexOf(name));
 		return prefs.roles.indexOf(name) >= 0;
 	}
 	return false;
