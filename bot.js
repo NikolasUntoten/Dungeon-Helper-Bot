@@ -154,7 +154,7 @@ function adminhelp(channel, prefix) {
 
 
 async function giveUserRole(guild, channel, user, prefs, rolename) {
-	if (checkRole(guild, prefs, rolename)) {
+	if (await checkRole(guild, prefs, rolename)) {
 		try {
 			const role = await getRole(guild, rolename);
 			await user.addRole(role, "Ask and you shall receive.");
@@ -167,7 +167,7 @@ async function giveUserRole(guild, channel, user, prefs, rolename) {
 }
 
 async function removeUserRole(guild, channel, user, prefs, rolename) {
-	if (checkRole(guild, prefs, rolename)) {
+	if (await checkRole(guild, prefs, rolename)) {
 		try {
 			const role = await getRole(guild, rolename);
 			await user.removeRole(role, "Ask and you shall receive.");
@@ -180,7 +180,7 @@ async function removeUserRole(guild, channel, user, prefs, rolename) {
 }
 
 async function adminAddRole(message, prefs, rolename) {
-	var role = getRole(message.guild, rolename);
+	var role = await getRole(message.guild, rolename);
 	
 	if (role && prefs.roles.indexOf(rolename) == -1) {
 		prefs.roles.push(rolename);
@@ -192,7 +192,7 @@ async function adminAddRole(message, prefs, rolename) {
 
 async function adminRemoveRole(message, prefs, rolename) {
 	
-	if (checkRole(message.guild, prefs, rolename)) {
+	if (await checkRole(message.guild, prefs, rolename)) {
 		prefs.roles.splice(prefs.roles.indexOf(rolename), 1);
 		savePrefs(message.guild.name, prefs);
 	} else {
