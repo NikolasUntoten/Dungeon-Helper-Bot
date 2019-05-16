@@ -27,6 +27,7 @@ const setavail = 'available';
 const remavail = 'unavailable';
 const setauto = 'setauto';
 const remauto = 'removeauto';
+const listauto = 'autoroles';
 const setprefix = 'setprefix';
 
 bot.on('ready', function (evt) {
@@ -91,6 +92,10 @@ bot.on("message", (message) => {
 			adminRemoveAuto(message, prefs, text);
 		}
 		
+		if (cmd == prefs.prefix + listauto) {
+			listAuto(prefs, message.channel);
+		}
+		
 		if (cmd == prefs.prefix + setprefix) {
 			prefs.prefix = text;
 			savePrefs(guildname);
@@ -128,6 +133,7 @@ function adminhelp(channel, prefix) {
 				+ prefix + remavail + " <role>: removes <role> from availability.\n"
 				+ prefix + setauto + " <role>: sets <role> to be automatically given to newcomers.\n"
 				+ prefix + remauto + " <role>: removes <role> from being automatically given to newcomers.\n"
+				+ prefix + listauto + ": lists all roles set to be automatically given to newcomers.\n"
 				+ prefix + setprefix + " <symbol>: sets the prefix for all messages (default '!') to a new symbol.\n");
 }
 
@@ -208,6 +214,17 @@ async function listRoles(prefs, channel) {
 	}
 	if (prefs.roles.length > 0) {
 		str += (`${prefs.roles[prefs.roles.length - 1]}`);
+	}
+	channel.send(str);
+}
+
+async function listAuto(prefs, channel) {
+	str = `Available roles: `;
+	for (var i = 0; i < prefs.autoroles.length-1; i++) {
+		str += (`${prefs.autoroles[i]}, `);
+	}
+	if (prefs.roles.length > 0) {
+		str += (`${prefs.autoroles[prefs.autoroles.length - 1]}`);
 	}
 	channel.send(str);
 }
