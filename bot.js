@@ -108,6 +108,8 @@ bot.on("message", (message) => {
 
 bot.on("guildMemberAdd", (member) => {
 	
+	var guildname = member.guild.name;
+	
 	var prefs = cache.get(guildname);
 	
 	if (!prefs) {
@@ -221,8 +223,10 @@ async function listRoles(prefs, channel) {
 	}
 	if (prefs.roles.length > 0) {
 		str += (`${prefs.roles[prefs.roles.length - 1]}`);
+		channel.send(str);
+	} else {
+		channel.send("No available roles.");
 	}
-	channel.send(str);
 }
 
 async function listAuto(prefs, channel) {
@@ -232,8 +236,10 @@ async function listAuto(prefs, channel) {
 	}
 	if (prefs.autoroles.length > 0) {
 		str += (`${prefs.autoroles[prefs.autoroles.length - 1]}`);
+		channel.send(str);
+	} else {
+		channel.send("No automatic roles.");
 	}
-	channel.send(str);
 }
 
 async function checkRole(guild, prefs, name) {
