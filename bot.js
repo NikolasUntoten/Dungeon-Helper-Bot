@@ -49,7 +49,7 @@ bot.on("message", (message) => {
 	const cmd = message.content.toLowerCase().split(" ")[0];
 	const text = message.content.substring(cmd.length + 1) //Little bit of input cleaning
 	
-	if (!prefs) {
+	if (typeof prefs === undefined) {
 		console.log("Loading prefs into cache.");
 		if (cmd.startsWith("!")) {
 			message.channel.send("Loading, please wait and try again.");
@@ -62,9 +62,7 @@ bot.on("message", (message) => {
 		return;
 	}
 	
-	console.log("Processing command " + cmd);
-	
-	console.log(prefs.prefix + "help" + "==" + (cmd == prefs.prefix + "help"));
+	console.log(prefs.prefix);
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
 	}
@@ -140,7 +138,6 @@ bot.login(process.env.token);
 
 // COMMAND METHODS
 function help(channel, prefix) {
-	console.log("sending help");
   channel.send(prefix + list + ": lists all available roles.\n"
 				+ prefix + role + " <role>: Sets the role of the user that sent this message to <role>. \n" 
 				+ prefix + remrole + " <role>: Removes the <role> from the user that sent this message.\n"
@@ -285,20 +282,15 @@ async function loadPrefs(guildname) {
 		console.log('Download Completed')
     });
 	
+	await sleep(1000);
 	
 	if (json) {
 		cache.set(guildname, json);
 		return json;
 	} else {
-		await sleep(1000);
-		if (json) {
-			cache.set(guildname, json);
-			return json;
-		} else {
-			console.log(json);
-			cache.set(guildname, makePrefs(guildname));
-			return cache.get(guildname);
-		}
+		console.log("Making default json");
+		cache.set(guildname, makePrefs(guildname));
+		return cache.get(guildname);
 	}
 }
 
