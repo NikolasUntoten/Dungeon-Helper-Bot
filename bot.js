@@ -57,6 +57,10 @@ bot.on("message", (message) => {
 		return;
 	}
 	
+	if (!cmd.startsWith(prefs.prefix)) {
+		return;
+	}
+	
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
 	}
