@@ -53,7 +53,7 @@ async function onMessage(message) {
 	
 	if (!prefs) {
 		console.log("Loading prefs into cache.");
-		await loadPrefs(guildname);
+		prefs = await loadPrefs(guildname);
 	}
 	
 	if (!cmd.startsWith("!")) {
