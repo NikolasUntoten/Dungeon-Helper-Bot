@@ -55,6 +55,7 @@ async function onMessage(message) {
 		console.log("Loading prefs into cache.");
 		prefs = await loadPrefs(guildname);
 	}
+	console.log(prefs);
 	
 	if (!cmd.startsWith("!")) {
 		return;
