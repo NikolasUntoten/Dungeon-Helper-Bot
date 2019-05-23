@@ -61,6 +61,8 @@ async function onMessage(message) {
 		return;
 	}
 	
+	console.log("Processing command \"" + cmd + "\" in " + guildname);
+	
 	if (cmd == prefs.prefix + "help") {
 		help(message.channel, prefs.prefix);
 	}
