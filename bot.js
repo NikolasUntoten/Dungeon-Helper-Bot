@@ -286,14 +286,8 @@ async function loadPrefs(guildname) {
 	
 	await sleep(1000);
 	
-	if (json) {
-		cache.set(guildname, json);
-		return json;
-	} else {
-		console.log("Making default json");
-		cache.set(guildname, makePrefs(guildname));
-		return cache.get(guildname);
-	}
+	cache.set(guildname, json);
+	return json;
 }
 
 function makePrefs(guildname) {
