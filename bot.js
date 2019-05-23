@@ -295,7 +295,7 @@ async function loadPrefs(guildname) {
 
 function makePrefs(guildname) {
 	var content = "{\"prefix\":\"!\", \"autoroles\":[], \"roles\":[]}";
-	savePrefs(guildname, content);
+	savePrefs(guildname, JSON.parse(content));
 	return JSON.parse(content);
 }
 
