@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.455.0",
-    "discord.js": "^11.2.1"
+    "aws-sdk": "^2.931.0",
+    "discord.js": "^11.6.4"
   }
 }
