@@ -6,11 +6,11 @@ const ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID;
 const SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const BUCKET = process.env.AWS_BUCKET_NAME;
 //aws.config.update(
-	//{
-		//ACCESS_KEY,
-		//SECRET_KEY,
-		//'us-east-1'
-	//}
+//	{
+//		accessKeyId: ACCESS_KEY, 
+//		secretAccessKey: SECRET_KEY, 
+//		region: 'us-east-1'
+//	}
 //);
 
 let s3 = new aws.S3();
@@ -56,7 +56,7 @@ async function onMessage(message) {
 		prefs = await loadPrefs(guildname);
 	}
 	
-	if (!cmd.startsWith("!")) {
+	if (!cmd.startsWith(prefs.prefix)) {
 		return;
 	}
 	
